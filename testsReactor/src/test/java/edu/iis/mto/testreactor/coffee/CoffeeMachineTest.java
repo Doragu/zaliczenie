@@ -26,7 +26,6 @@ class CoffeeMachineTest {
     @Mock
     private CoffeeReceipes coffeeReceipes;
 
-
     private CoffeeReceipe coffeeReceipe;
     private CoffeeMachine coffeeMachine;
     private CoffeOrder coffeeOrder;
@@ -35,16 +34,9 @@ class CoffeeMachineTest {
     public void setUp() {
         coffeeMachine = new CoffeeMachine(grinder, milkProvider, coffeeReceipes);
 
-        coffeeOrder = CoffeOrder
-                .builder().withSize(CoffeeSize.STANDARD)
-                .withType(CoffeType.ESPRESSO)
-                .build();
+        coffeeOrder = CoffeOrder.builder().withSize(CoffeeSize.STANDARD).withType(CoffeType.ESPRESSO).build();
 
-        coffeeReceipe = CoffeeReceipe
-                .builder()
-                .withWaterAmounts(Map.of(CoffeeSize.STANDARD, 100))
-                .withMilkAmount(100)
-                .build();
+        coffeeReceipe = CoffeeReceipe.builder().withWaterAmounts(Map.of(CoffeeSize.STANDARD, 100)).withMilkAmount(100).build();
     }
 
     @Test
@@ -78,7 +70,5 @@ class CoffeeMachineTest {
 
         assertThrows(NoCoffeeBeansException.class, () -> coffeeMachine.make(coffeeOrder));
     }
-
-
 
 }
