@@ -2,6 +2,7 @@ package edu.iis.mto.testreactor.coffee;
 
 import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,7 +35,6 @@ class CoffeeMachineTest {
     private CoffeeReceipe coffeeReceipe;
     private CoffeeMachine coffeeMachine;
     private CoffeOrder coffeeOrder;
-    private Coffee properCoffee;
 
     @BeforeEach
     public void setUp() {
@@ -54,11 +54,11 @@ class CoffeeMachineTest {
                 .build();
 
         when(grinder.canGrindFor(CoffeeSize.STANDARD)).thenReturn(true);
-        when(coffeeReceipes.getReceipe(CoffeType.ESPRESSO)).thenReturn(Optional.of(coffeeReceipe));
     }
 
     @Test
     public void shouldReturnRightCoffeWithProperParams() {
+        when(coffeeReceipes.getReceipe(CoffeType.ESPRESSO)).thenReturn(Optional.of(coffeeReceipe));
         Coffee result = coffeeMachine.make(coffeeOrder);
 
         assertTrue(result.getCoffeeWeigthGr().equals(200));
@@ -68,6 +68,7 @@ class CoffeeMachineTest {
 
     @Test
     public void shouldUseProperMethodsWithProperParams() throws MilkProviderException {
+        when(coffeeReceipes.getReceipe(CoffeType.ESPRESSO)).thenReturn(Optional.of(coffeeReceipe));
         coffeeMachine.make(coffeeOrder);
 
         verify(grinder).grind(any());
@@ -76,4 +77,10 @@ class CoffeeMachineTest {
         verify(coffeeReceipes, atLeast(1)).getReceipe(any());
     }
 
+    @Test
+    public void shouldThrowIfCantGrind() {
+        when(grinder.canGrindFor(CoffeeSize.STANDARD)).thenReturn(false);
+
+        assertThrows(NoCoffeeBeansException.class, () -> coffeeMachine.make(coffeeOrder));
+    }
 }
