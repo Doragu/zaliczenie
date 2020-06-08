@@ -61,8 +61,6 @@ class CoffeeMachineTest {
     public void shouldReturnRightCoffeWithProperParams() {
         Coffee result = coffeeMachine.make(coffeeOrder);
 
-        System.out.println(result.getCoffeeWeigthGr());
-
         assertTrue(result.getCoffeeWeigthGr().equals(200));
         assertTrue(result.getMilkAmout().equals(100));
         assertTrue(result.getWaterAmount().equals(100));
