@@ -1,23 +1,18 @@
 package edu.iis.mto.testreactor.coffee;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import edu.iis.mto.testreactor.coffee.milkprovider.MilkProvider;
 import edu.iis.mto.testreactor.coffee.milkprovider.MilkProviderException;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,27 +42,27 @@ class CoffeeMachineTest {
 
         coffeeReceipe = CoffeeReceipe
                 .builder()
-                .withWaterAmounts(new HashMap<CoffeeSize, Integer>() {{
-                    put(CoffeeSize.STANDARD, 100);
-                }})
+                .withWaterAmounts(Map.of(CoffeeSize.STANDARD, 100))
                 .withMilkAmount(100)
                 .build();
-
-        when(grinder.canGrindFor(CoffeeSize.STANDARD)).thenReturn(true);
     }
 
     @Test
     public void shouldReturnRightCoffeWithProperParams() {
+        when(grinder.canGrindFor(CoffeeSize.STANDARD)).thenReturn(true);
+        when(grinder.grind(any(CoffeeSize.class))).thenReturn(100d);
         when(coffeeReceipes.getReceipe(CoffeType.ESPRESSO)).thenReturn(Optional.of(coffeeReceipe));
         Coffee result = coffeeMachine.make(coffeeOrder);
 
-        assertTrue(result.getCoffeeWeigthGr().equals(200));
-        assertTrue(result.getMilkAmout().equals(100));
+        assertTrue(result.getCoffeeWeigthGr().equals(100d));
+        assertTrue(result.getMilkAmout().equals(Optional.of(100)));
         assertTrue(result.getWaterAmount().equals(100));
     }
 
     @Test
     public void shouldUseProperMethodsWithProperParams() throws MilkProviderException {
+        when(grinder.canGrindFor(CoffeeSize.STANDARD)).thenReturn(true);
+        when(grinder.grind(any(CoffeeSize.class))).thenReturn(100d);
         when(coffeeReceipes.getReceipe(CoffeType.ESPRESSO)).thenReturn(Optional.of(coffeeReceipe));
         coffeeMachine.make(coffeeOrder);
 
@@ -83,4 +78,7 @@ class CoffeeMachineTest {
 
         assertThrows(NoCoffeeBeansException.class, () -> coffeeMachine.make(coffeeOrder));
     }
+
+
+
 }
